@@ -20,10 +20,12 @@ if(dc)dc.onclick=()=>{navigator.clipboard.writeText("justadev");dc.querySelector
 const md=i=>{const y=i.src.match(/(?:youtu\.be\/|v=)([\w-]{11})/);return y?`<iframe src="https://www.youtube.com/embed/${y[1]}" allowfullscreen></iframe>`:i.kind=="video"?`<video src="${esc(i.src)}" controls playsinline preload="metadata"></video>`:`<img src="${esc(i.src)}" alt="${esc(i.title)}" loading="lazy">`};
 const card=i=>`<article class="rv"><div class="m">${md(i)}</div><p class="ey" style="margin-top:16px">${esc(i.cat)}</p><h3 style="margin-top:6px">${esc(i.title)}</h3><p>${esc(i.desc)}</p></article>`;
 const G=document.getElementById("gr"),H=document.getElementById("hg");
-if(G||H)fetch("/api/media").then(r=>r.json()).catch(()=>[]).then(d=>{
-if(H){if(d.length){H.innerHTML=d.slice(0,3).map(card).join("");document.getElementById("hw").hidden=false;rv()}return}
-let f="All";const bs=document.querySelectorAll(".fl button"),draw=()=>{const l=d.filter(i=>f=="All"||i.cat==f);G.innerHTML=l.length?l.map(card).join(""):`<p class="lead">No projects uploaded yet.</p>`;rv()};
-bs.forEach(b=>b.onclick=()=>{f=b.dataset.f;bs.forEach(x=>x.classList.toggle("on",x==b));draw()});draw()});
+if(G||H){let d=[],f="All",sg="";
+const bs=document.querySelectorAll(".fl button"),
+draw=()=>{if(H){H.innerHTML=d.slice(0,3).map(card).join("");document.getElementById("hw").hidden=!d.length;rv();return}const l=d.filter(i=>f=="All"||i.cat==f);G.innerHTML=l.length?l.map(card).join(""):`<p class="lead">No projects uploaded yet.</p>`;rv()},
+pull=()=>fetch("/api/media",{cache:"no-store"}).then(r=>r.json()).then(r=>{const s=JSON.stringify(r);if(s!=sg){sg=s;d=r;draw()}}).catch(()=>{});
+bs.forEach(b=>b.onclick=()=>{f=b.dataset.f;bs.forEach(x=>x.classList.toggle("on",x==b));draw()});
+pull();setInterval(pull,5000);document.addEventListener("visibilitychange",()=>!document.hidden&&pull())}
 
 document.querySelectorAll(".hv").forEach(el=>{const w=n=>[...n.childNodes].forEach(c=>{if(c.nodeType==3){const f=document.createDocumentFragment();[...c.textContent].forEach((t,i)=>{const s=document.createElement("span");s.className="ch";s.textContent=t==" "?"\u00a0":t;s.style.transitionDelay=i*25+"ms";f.append(s)});c.replaceWith(f)}else if(c.nodeType==1)w(c)});w(el)});
 const ty=document.getElementById("ty");

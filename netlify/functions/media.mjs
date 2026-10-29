@@ -1,10 +1,10 @@
 import{getStore}from"@netlify/blobs";
 export const config={path:"/api/media"};
 export default async req=>{
-const s=getStore("gallery"),u=new URL(req.url),idx=async()=>await s.get("index",{type:"json"})||[];
+const s=getStore({name:"gallery",consistency:"strong"}),u=new URL(req.url),idx=async()=>await s.get("index",{type:"json"})||[];
 if(req.method=="GET"){
 const f=u.searchParams.get("file");
-if(!f)return Response.json(await idx());
+if(!f)return Response.json(await idx(),{headers:{"cache-control":"no-store"}});
 const e=(await idx()).find(i=>i.id==f),d=await s.get("f_"+f,{type:"arrayBuffer"});
 return e&&d?new Response(d,{headers:{"content-type":e.mime,"cache-control":"public,max-age=31536000"}}):new Response("",{status:404})}
 const pw=process.env.ADMIN_PASSWORD||"Justastudio";
