@@ -41,3 +41,16 @@ rs();addEventListener("resize",rs);
 s.addEventListener("mousemove",e=>{const r=s.getBoundingClientRect();m.x=e.clientX-r.left;m.y=e.clientY-r.top});
 s.addEventListener("mouseleave",()=>{m.x=m.y=-999});
 const dr=()=>{x.clearRect(0,0,w,h);for(let i=0;i<w;i+=26)for(let j=0;j<h;j+=26){const n=Math.max(0,1-Math.hypot(i-m.x,j-m.y)/170);x.fillStyle=`rgba(10,10,10,${.1+n*.4+Math.sin(i*.01-j*.012+t*1.3)*.05})`;x.beginPath();x.arc(i+13,j+13,1.2+Math.sin(i*.012+j*.012+t)*.5+n*2.6,0,7);x.fill()}t+=.03;if(!rm)requestAnimationFrame(dr)};dr()}
+
+const rm2=matchMedia("(prefers-reduced-motion:reduce)").matches;
+const dsv=document.querySelector(".do svg");
+if(dsv){const p=dsv.querySelector("path");let tm=0,raf=0;
+const ez=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,ei=t=>t*t*t;
+const make=()=>{const w=dsv.clientWidth,h=dsv.clientHeight,R=Math.random,a0=R()*6.28,dir=R()<.5?1:-1,ph=R()*6.28,sp=1.1+R()*.15,rot=(R()-.5)*.16,sk=.9+R()*.1;dsv.setAttribute("viewBox",`0 0 ${w} ${h}`);let d="";const N=110;for(let i=0;i<=N;i++){const u=i/N,th=a0+dir*u*sp*6.2832,g=1+.05*Math.sin(2*th+ph)+.03*Math.sin(3*th+ph*2)+u*.07,x=Math.cos(th)*w*.46*g,y=Math.sin(th)*h*.44*g*sk;d+=(i?"L":"M")+(w/2+x*Math.cos(rot)-y*Math.sin(rot)).toFixed(1)+" "+(h/2+x*Math.sin(rot)+y*Math.cos(rot)).toFixed(1)}p.setAttribute("d",d);p.style.strokeWidth=(1.8+R()*1.2).toFixed(1);const L=p.getTotalLength();p.style.strokeDasharray=L;return L};
+const cyc=()=>{const L=make();let t0=null;p.style.strokeDashoffset=L;const st=t=>{if(t0===null)t0=t;const e=t-t0;if(e<1300)p.style.strokeDashoffset=L*(1-ez(e/1300));else if(e<4300)p.style.strokeDashoffset=0;else if(e<4900)p.style.strokeDashoffset=-L*ei((e-4300)/600);else{p.style.strokeDashoffset=L;tm=setTimeout(cyc,600);return}raf=requestAnimationFrame(st)};raf=requestAnimationFrame(st)};
+const start=()=>{clearTimeout(tm);cancelAnimationFrame(raf);if(rm2){make();p.style.strokeDashoffset=0}else tm=setTimeout(cyc,300)};
+tm=setTimeout(rm2?start:cyc,1900);addEventListener("resize",start)}
+document.querySelectorAll(".q").forEach(q=>{const is=[...q.children],T=is.map(i=>i.textContent),A="ABCDEFGHIJKLMNOPRSTUVWXYZ#%&@",end=500+is.length*110;let busy=0;
+document.fonts.ready.then(()=>is.forEach(i=>i.style.width=i.offsetWidth+"px"));
+const go=()=>{if(busy||rm2)return;busy=1;const t0=performance.now();let ps=-1;const f=t=>{const e=t-t0;if(e>=end){is.forEach((i,k)=>{i.textContent=T[k];i.classList.remove("sc")});busy=0;return}const s=e/70|0;if(s!=ps){ps=s;is.forEach((i,k)=>{if(e<500+k*110){i.textContent=A[Math.random()*A.length|0];i.classList.add("sc")}else{i.textContent=T[k];i.classList.remove("sc")}})}requestAnimationFrame(f)};requestAnimationFrame(f)};
+setTimeout(go,900);setInterval(go,6500);q.onmouseenter=go});
