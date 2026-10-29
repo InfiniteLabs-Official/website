@@ -2,3 +2,8 @@
 publish = "public"
 [functions]
 directory = "netlify/functions"
+
+[[redirects]]
+from = "/contact"
+to = "/socials"
+status = 301

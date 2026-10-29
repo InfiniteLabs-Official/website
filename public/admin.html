@@ -1,14 +1,75 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin — Just a Studio</title><meta name="description" content=""><meta property="og:title" content="Admin — Just a Studio"><meta property="og:description" content=""><meta property="og:url" content="https://justastudio.netlify.app/admin"><meta property="og:image" content="https://justastudio.netlify.app/assets/logo.png"><meta name="twitter:card" content="summary"><meta name="twitter:site" content="@JustADev_rblx"><link rel="canonical" href="https://justastudio.netlify.app/admin"><link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"><link rel="stylesheet" href="/style.css"><meta name="robots" content="noindex"></head><body data-p="admin" data-cta=""><main>
-
-<section style="padding:64px 0"><div class="w" style="max-width:640px"><div id="lg"><h1>Admin</h1><form onsubmit="return false" style="margin-top:24px"><input id="pw" type="password" placeholder="Password"><button class="btn" id="login" style="justify-self:start">Log in</button></form></div>
-<div id="ad" hidden><h1>Upload</h1><form id="up" style="margin-top:24px"><input id="ti" placeholder="Title" required><select id="ca"><option>Scripting</option><option>UI</option><option>Animation</option></select><textarea id="de" rows="3" placeholder="Description"></textarea><input id="fi" type="file" accept="image/*,video/*"><input id="ur" placeholder="or video/image/YouTube URL"><button class="btn" style="justify-self:start">Upload</button></form><ul id="list" style="margin-top:32px"></ul></div><p id="msg" style="margin-top:16px"></p></div></section>
-</main><script src="/app.js"></script><script>
-const hd=()=>({"content-type":"application/json","x-admin":sessionStorage.pw||""}),api=(m,b,q="")=>fetch("/api/media"+q,{method:m,headers:hd(),body:b&&JSON.stringify(b)});
-const load=async()=>{const d=await(await fetch("/api/media")).json();list.innerHTML=d.map(i=>`<li style="padding:12px 0;border-bottom:1px solid var(--bd)">${esc(i.title)} · ${esc(i.cat)} · ${i.kind} <button data-d="${i.id}">Delete</button></li>`).join("")};
-login.onclick=async()=>{sessionStorage.pw=pw.value;const r=await api("POST",{check:1});if(r.ok){lg.hidden=true;ad.hidden=false;load()}else msg.textContent="Wrong password"};
-up.onsubmit=async e=>{e.preventDefault();const f=fi.files[0],b={title:ti.value,cat:ca.value,desc:de.value,url:ur.value};
-if(f){if(f.size>4e6)return msg.textContent="Max 4MB. Use a YouTube or direct URL for larger videos.";b.mime=f.type;b.kind=f.type.startsWith("video")?"video":"image";b.data=await new Promise(r=>{const x=new FileReader;x.onload=()=>r(x.result.split(",")[1]);x.readAsDataURL(f)})}
-else if(ur.value)b.kind=/\.(mp4|webm|mov)$|youtu/.test(ur.value)?"video":"image";else return msg.textContent="Add a file or URL";
-const r=await api("POST",b);msg.textContent=r.ok?"Uploaded":"Upload failed";if(r.ok){up.reset();load()}};
-list.onclick=async e=>{const i=e.target.dataset.d;if(i&&confirm("Delete this item?")){await api("DELETE",null,"?id="+i);load()}};
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin — Just a Studio</title><meta name="description" content=""><meta property="og:title" content="Admin — Just a Studio"><meta property="og:description" content=""><meta property="og:url" content="https://justastudio.netlify.app/admin"><meta property="og:image" content="https://justastudio.netlify.app/assets/logo.png"><meta name="twitter:card" content="summary"><meta name="twitter:site" content="@JustADev_rblx"><link rel="canonical" href="https://justastudio.netlify.app/admin"><link rel="icon" href="/assets/logo.png"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"><link rel="stylesheet" href="/style.css"><meta name="robots" content="noindex"><style>
+body[data-p=admin]{--bg:#0a0a0a;--fg:#f2f2f2;--mu:#8a8a8a;--bd:#262626;--sc:#141414}
+body[data-p=admin] nav,body[data-p=admin] footer,body[data-p=admin] #ov,body[data-p=admin] #pg{display:none}
+.lc{max-width:400px;margin:14vh auto;padding:44px 36px;border:1px solid var(--bd);background:var(--sc);border-radius:24px;text-align:center;animation:u2 .8s cubic-bezier(.16,1,.3,1)}
+@keyframes u2{from{opacity:0;transform:translateY(20px)}}
+.lc img{width:72px;height:72px;border-radius:50%;object-fit:cover;filter:grayscale(1)}
+.lc h1{font-size:2rem;margin-top:20px}
+.lc p{color:var(--mu);margin:8px 0 24px}
+.lc form{border:0;padding:0}
+.lc input{text-align:center;border:1px solid var(--bd);border-radius:12px;padding:14px;background:#0f0f0f}
+#le{color:#ff6b6b;margin:16px 0 0!important;min-height:1em}
+.ad{max-width:1200px;margin:auto;padding:32px 24px 80px;animation:u2 .8s cubic-bezier(.16,1,.3,1)}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:32px}
+.who{display:flex;gap:16px;align-items:center}
+.who img{width:52px;height:52px;border-radius:50%;filter:grayscale(1)}
+.who h1{font-size:1.8rem}
+.who p{color:var(--mu);font-size:14px}
+.top .btn{margin-left:8px;height:40px;padding:0 20px;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.stats div,.card{background:var(--sc);border:1px solid var(--bd);border-radius:20px;padding:24px}
+.stats b{display:block;font:700 2.6rem var(--d)}
+.stats span{color:var(--mu);font-size:14px}
+.gd{display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:start}
+@media(max-width:900px){.gd{grid-template-columns:1fr}}
+.card h2{font-size:1.4rem;margin:0 0 20px}
+#up{gap:16px}
+#up input:not([hidden]),#up textarea{border:1px solid var(--bd);border-radius:12px;padding:12px 14px;background:#0f0f0f}
+#up input:focus,#up textarea:focus{border-color:var(--fg)}
+.dz{display:grid;place-items:center;text-align:center;min-height:150px;border:1.5px dashed #3a3a3a;border-radius:16px;cursor:pointer;transition:.3s;padding:16px;overflow:hidden}
+.dz:hover,.dz.ov{border-color:var(--fg);background:#1a1a1a}
+#pv{display:grid;gap:8px;justify-items:center}
+.dz span{color:var(--mu);font-size:13px}
+.dz img,.dz video{max-height:140px;max-width:100%;border-radius:10px}
+.pills{display:flex;gap:8px}
+.pills button{flex:1;height:40px;border:1px solid var(--bd);background:none;color:var(--mu);border-radius:99px;cursor:pointer;font:14px Inter;transition:.3s}
+.pills .on,.pills button:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn[disabled]{opacity:.6;pointer-events:none}
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
+.th{position:relative;aspect-ratio:16/10;background:#0f0f0f;border-radius:14px;overflow:hidden}
+.th img,.th video{width:100%;height:100%;object-fit:cover}
+.it .ey{margin-top:12px;letter-spacing:.2em}
+.it h3{font-size:1.1rem;margin-top:4px}
+.th button{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.75);color:#fff;border:0;border-radius:99px;min-width:32px;height:32px;padding:0 10px;cursor:pointer;opacity:0;transition:.3s;font:12px Inter}
+.it:hover .th button,.th button.cf{opacity:1}
+.th button.cf{background:#d33}
+.em{color:var(--mu)}
+#tt{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:12px 22px;border-radius:99px;opacity:0;transition:.4s;pointer-events:none;font-size:14px;z-index:200}
+#tt.on{opacity:1;transform:translate(-50%,0)}
+#tt.er{background:#d33;color:#fff}
+</style></head><body data-p="admin" data-cta=""><main><div id="lg" class="lc"><img src="/assets/logo.png" alt=""><h1>Studio Admin</h1><p>Sign in to manage your gallery.</p><form id="lf"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button class="btn" style="justify-self:center">Sign in</button></form><p id="le"></p></div>
+<div id="ad" class="ad" hidden><div class="top"><div class="who"><img src="/assets/logo.png" alt=""><div><h1>Gallery</h1><p>Manage what appears on your portfolio</p></div></div><div><a class="btn o" href="/gallery" target="_blank">View site</a><button class="btn o" id="out">Log out</button></div></div>
+<div class="stats"><div><b id="s1">0</b><span>Total</span></div><div><b id="s2">0</b><span>Images</span></div><div><b id="s3">0</b><span>Videos</span></div></div>
+<div class="gd"><form id="up" class="card"><h2>New upload</h2><label id="dz" class="dz"><input id="fi" type="file" accept="image/*,video/*" hidden><div id="pv"></div></label><input id="ti" placeholder="Title" required><div class="pills" id="pl"><button type="button" class="on">Scripting</button><button type="button">UI</button><button type="button">Animation</button></div><textarea id="de" rows="3" placeholder="Description"></textarea><input id="ur" placeholder="Or paste a YouTube / video / image URL"><button class="btn" id="ub">Upload</button></form>
+<div class="card"><h2>Library</h2><div id="lib" class="lib"></div></div></div></div><div id="tt"></div></main><script src="/app.js"></script><script>
+const hd=()=>({"content-type":"application/json","x-admin":sessionStorage.pw||""}),api=(m,b,q="")=>fetch("/api/media"+q,{method:m,headers:hd(),body:b&&JSON.stringify(b)}),$=id=>document.getElementById(id);
+let cat="Scripting",pv=null;
+const toast=(m,e)=>{const t=$("tt");t.textContent=m;t.className="on"+(e?" er":"");clearTimeout(t.k);t.k=setTimeout(()=>t.className="",2600)};
+const th=i=>{const y=i.src.match(/(?:youtu\.be\/|v=)([\w-]{11})/);return y?`<img src="https://img.youtube.com/vi/${y[1]}/mqdefault.jpg" alt="">`:i.kind=="video"?`<video src="${esc(i.src)}#t=0.5" preload="metadata" muted></video>`:`<img src="${esc(i.src)}" alt="">`};
+const load=async()=>{const d=await(await fetch("/api/media")).json();$("s1").textContent=d.length;$("s2").textContent=d.filter(i=>i.kind!="video").length;$("s3").textContent=d.filter(i=>i.kind=="video").length;$("lib").innerHTML=d.length?d.map(i=>`<div class="it"><div class="th">${th(i)}<button data-d="${i.id}">✕</button></div><p class="ey">${esc(i.cat)} · ${i.kind}</p><h3>${esc(i.title)}</h3></div>`).join(""):`<p class="em">Nothing here yet. Upload your first project.</p>`};
+const login=async e=>{e&&e.preventDefault();if($("pw").value)sessionStorage.pw=$("pw").value;const r=await api("POST",{check:1});if(r.ok){$("lg").hidden=true;$("ad").hidden=false;load()}else{$("le").textContent=sessionStorage.pw?"Incorrect password":"";sessionStorage.removeItem("pw")}};
+$("lf").onsubmit=login;if(sessionStorage.pw)login();
+$("out").onclick=()=>{sessionStorage.removeItem("pw");location.reload()};
+$("pl").onclick=e=>{if(e.target.tagName!="BUTTON")return;cat=e.target.textContent;[...$("pl").children].forEach(b=>b.classList.toggle("on",b==e.target))};
+const show=f=>{pv=f;$("pv").innerHTML=f?(f.type.startsWith("video")?`<video src="${URL.createObjectURL(f)}" muted></video>`:`<img src="${URL.createObjectURL(f)}" alt="">`)+`<span>${esc(f.name)}</span>`:`<b>Drop a file here</b><span>or click to browse · up to 4MB</span>`};
+show(null);
+$("fi").onchange=()=>show($("fi").files[0]);
+const dz=$("dz");dz.ondragover=e=>{e.preventDefault();dz.classList.add("ov")};dz.ondragleave=()=>dz.classList.remove("ov");
+dz.ondrop=e=>{e.preventDefault();dz.classList.remove("ov");const f=e.dataTransfer.files[0];if(f){$("fi").files=e.dataTransfer.files;show(f)}};
+$("up").onsubmit=async e=>{e.preventDefault();const f=pv,b={title:$("ti").value,cat,desc:$("de").value,url:$("ur").value};
+if(f){if(f.size>4e6)return toast("Max 4MB. Use a YouTube or direct URL for larger videos.",1);b.mime=f.type;b.kind=f.type.startsWith("video")?"video":"image";b.data=await new Promise(r=>{const x=new FileReader;x.onload=()=>r(x.result.split(",")[1]);x.readAsDataURL(f)})}
+else if(b.url)b.kind=/\.(mp4|webm|mov)$|youtu/.test(b.url)?"video":"image";else return toast("Add a file or URL",1);
+const u=$("ub");u.disabled=true;u.textContent="Uploading…";const r=await api("POST",b);u.disabled=false;u.textContent="Upload";
+if(r.ok){toast("Uploaded");$("up").reset();show(null);load()}else toast("Upload failed",1)};
+$("lib").onclick=async e=>{const b=e.target.closest("button[data-d]");if(!b)return;if(!b.classList.contains("cf")){b.classList.add("cf");b.textContent="Sure?";setTimeout(()=>{b.classList.remove("cf");b.textContent="✕"},3000);return}await api("DELETE",null,"?id="+b.dataset.d);toast("Deleted");load()};
 </script></body></html>
