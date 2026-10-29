@@ -29,12 +29,7 @@ nav .btn{height:40px;padding:0 20px;font-size:14px}
 .ol{-webkit-text-stroke:2px var(--fg);color:transparent;padding:0 .08em}
 .tg{font:clamp(1.5rem,4vw,2.8rem)/1.25 var(--d);margin-top:20px;padding-bottom:.1em}
 .tg b{font-weight:900}
-.do{border-bottom:3px solid var(--fg)}
 .hp .btn{margin:32px 12px 0 0}
-.mq{background:var(--fg);color:var(--bg);overflow:hidden;white-space:nowrap;padding:20px 0}
-.mq div{display:inline-block;animation:mq 30s linear infinite;font:italic 28px var(--d)}
-.mq span{margin:0 28px;opacity:.5;font-style:normal}
-@keyframes mq{to{transform:translateX(-50%)}}
 .g3{display:grid;gap:1px;background:var(--bd);border:1px solid var(--bd);grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:56px}
 .g3>*{background:var(--bg);padding:40px;transition:.5s}
 .g3>*:hover{background:var(--fg);color:var(--bg)}
@@ -100,7 +95,33 @@ footer b,footer em{color:var(--fg)}
 #ov{position:fixed;inset:0;background:var(--fg);color:var(--bg);z-index:100;display:grid;place-items:center;transition:opacity .5s,visibility .5s;font:italic 36px var(--d);text-align:center}
 #ov.h{opacity:0;visibility:hidden;pointer-events:none}
 #ov img{width:72px;border-radius:50%;filter:grayscale(1);margin-bottom:12px}
-.rv{opacity:0;transform:translateY(24px);transition:.8s}
-.rv.in{opacity:1;transform:none}
+.js .rv{opacity:0;transform:translateY(24px);transition:.8s}
+.js .rv.in{opacity:1;transform:none}
 @media(max-width:800px){.tl>div,.bio,.sv,.sk,.ct,footer .w:first-child{grid-template-columns:1fr;gap:16px}.sv{gap:24px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.mq{background:var(--fg);color:var(--bg);overflow:hidden;padding:20px 0}
+.tk{display:flex;width:max-content;animation:mq 40s linear infinite}
+.mg{display:flex;flex-shrink:0;align-items:center}
+.mg b{font:italic 400 28px var(--d);padding:0 28px;white-space:nowrap}
+.mg span{opacity:.5}
+@keyframes mq{to{transform:translateX(-50%)}}
+.wr{display:inline-block;overflow:hidden;vertical-align:bottom;padding:.08em .2em .18em;margin:-.08em -.2em -.18em}
+.wr>span{display:inline-block;opacity:0;transform:translateY(115%);animation:up .9s cubic-bezier(.16,1,.3,1) var(--d,0s) forwards}
+@keyframes up{to{transform:none;opacity:1}}
+.you .wr{overflow:visible}
+.ch{display:inline-block;transition:transform .45s cubic-bezier(.16,1,.3,1)}
+.ch:hover{transform:translateY(-.1em) skewX(-8deg)}
+.you i{font-style:normal;display:inline-block;animation:pop .8s cubic-bezier(.34,1.56,.64,1) var(--g)}
+@keyframes pop{40%{transform:translateY(-.2em) rotate(-7deg) scale(1.12)}}
+.do{position:relative;display:inline-block}
+.do svg{position:absolute;left:-14%;top:-20%;width:128%;height:140%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;pointer-events:none}
+.do path{stroke-dasharray:1;stroke-dashoffset:1;animation:dr 1.2s ease-out 1.9s forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.caret{display:inline-block;width:2px;height:1em;background:currentColor;margin-left:3px;vertical-align:-.12em;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+.pd{position:relative;display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--fg);margin-right:12px}
+.pd:after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--fg);animation:pg 1.6s ease-out infinite}
+@keyframes pg{to{transform:scale(3);opacity:0}}
+.tl h3{transition:transform .5s}
+.tl>div:hover h3{transform:translateX(8px)}
